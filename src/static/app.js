@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentDay = "";
   let currentTimeRange = "";
   let pendingSharedActivity = getSharedActivityName();
+  let activitiesRequestId = 0;
 
   // Authentication state
   let currentUser = null;
@@ -370,6 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to fetch activities from API with optional day and time filters
   async function fetchActivities() {
+    const requestId = ++activitiesRequestId;
     // Show loading skeletons first
     showLoadingSkeletons();
 
@@ -401,6 +403,9 @@ document.addEventListener("DOMContentLoaded", () => {
         queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
       const response = await fetch(`/activities${queryString}`);
       const activities = await response.json();
+      if (requestId !== activitiesRequestId) {
+        return;
+      }
 
       // Save the activities data
       allActivities = activities;
@@ -408,6 +413,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Apply search and filter, and handle weekend filter in client
       displayFilteredActivities();
     } catch (error) {
+      if (requestId !== activitiesRequestId) {
+        return;
+      }
       activitiesList.innerHTML =
         "<p>Failed to load activities. Please try again later.</p>";
       console.error("Error fetching activities:", error);
