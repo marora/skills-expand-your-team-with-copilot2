@@ -1,3 +1,5 @@
+import { addSharingControls, getSharedActivityName } from "./sharing.js";
+
 document.addEventListener("DOMContentLoaded", () => {
   // DOM elements
   const activitiesList = document.getElementById("activities-list");
@@ -40,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  let pendingSharedActivity = getSharedActivityName();
 
   // Authentication state
   let currentUser = null;
@@ -472,12 +475,25 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.entries(filteredActivities).forEach(([name, details]) => {
       renderActivityCard(name, details);
     });
+
+    if (pendingSharedActivity) {
+      const sharedCard = Array.from(activitiesList.children).find(
+        (card) => card.dataset.activity === pendingSharedActivity
+      );
+      if (sharedCard) {
+        sharedCard.focus({ preventScroll: true });
+        sharedCard.scrollIntoView({ block: "center" });
+      }
+      pendingSharedActivity = null;
+    }
   }
 
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
+    activityCard.dataset.activity = name;
+    activityCard.tabIndex = -1;
 
     // Calculate spots and capacity
     const totalSpots = details.max_participants;
@@ -589,6 +605,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    addSharingControls(activityCard, name);
     activitiesList.appendChild(activityCard);
   }
 
@@ -862,6 +879,28 @@ document.addEventListener("DOMContentLoaded", () => {
     setDayFilter,
     setTimeRangeFilter,
   };
+
+  window.addEventListener("hashchange", () => {
+    pendingSharedActivity = getSharedActivityName();
+    if (!pendingSharedActivity) {
+      return;
+    }
+    currentFilter = "all";
+    searchQuery = "";
+    currentDay = "";
+    currentTimeRange = "";
+    searchInput.value = "";
+    categoryFilters.forEach((button) => {
+      button.classList.toggle("active", button.dataset.category === "all");
+    });
+    dayFilters.forEach((button) => {
+      button.classList.toggle("active", button.dataset.day === "");
+    });
+    timeFilters.forEach((button) => {
+      button.classList.toggle("active", button.dataset.time === "");
+    });
+    fetchActivities();
+  });
 
   // Initialize app
   checkAuthentication();
