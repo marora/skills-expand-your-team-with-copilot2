@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("activity-search");
   const searchButton = document.getElementById("search-button");
   const categoryFilters = document.querySelectorAll(".category-filter");
+  const difficultyFilters = document.querySelectorAll(".difficulty-filter");
   const dayFilters = document.querySelectorAll(".day-filter");
   const timeFilters = document.querySelectorAll(".time-filter");
 
@@ -37,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // State for activities and filters
   let allActivities = {};
   let currentFilter = "all";
+  let currentDifficulty = "";
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
@@ -96,6 +98,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     fetchActivities();
+  }
+
+  function setDifficultyFilter(difficulty) {
+    const selectedButton = [...difficultyFilters].find(
+      (button) => button.dataset.difficulty === difficulty
+    );
+    if (!selectedButton) {
+      return;
+    }
+
+    currentDifficulty = difficulty;
+    difficultyFilters.forEach((button) => {
+      if (button === selectedButton) {
+        button.classList.add("active");
+      } else {
+        button.classList.remove("active");
+      }
+    });
+    displayFilteredActivities();
   }
 
   // Check if user is already logged in (from localStorage)
@@ -427,6 +448,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      // Filter by difficulty; "All" selects activities with no difficulty set.
+      if (
+        (currentDifficulty === "unspecified" && details.difficulty) ||
+        (currentDifficulty &&
+          currentDifficulty !== "unspecified" &&
+          details.difficulty !== currentDifficulty)
+      ) {
+        return;
+      }
+
       // Apply weekend filter if selected
       if (currentTimeRange === "weekend" && details.schedule_details) {
         const activityDays = details.schedule_details.days;
@@ -614,6 +645,13 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update current filter and display filtered activities
       currentFilter = button.dataset.category;
       displayFilteredActivities();
+    });
+  });
+
+  // Add event listeners to difficulty filter buttons
+  difficultyFilters.forEach((button) => {
+    button.addEventListener("click", () => {
+      setDifficultyFilter(button.dataset.difficulty);
     });
   });
 
@@ -861,6 +899,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.activityFilters = {
     setDayFilter,
     setTimeRangeFilter,
+    setDifficultyFilter,
   };
 
   // Initialize app
