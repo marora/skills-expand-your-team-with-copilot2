@@ -1,5 +1,7 @@
 /* Color palette */
 :root {
+  color-scheme: light;
+
   /* Primary colors */
   --primary: #1a237e;
   --primary-light: #534bae;
@@ -20,6 +22,9 @@
   --border: #e0e0e0;
   --border-light: #f0f0f0;
   --border-focus: #d0d0d0;
+  --heading-color: var(--primary);
+  --tag-background: #e8eaf6;
+  --tag-text: #3949ab;
 
   /* Feedback colors */
   --success: #2e7d32;
@@ -30,6 +35,24 @@
   --error-light: #ffebee;
   --info: #0c5460;
   --info-light: #d1ecf1;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #121212;
+  --surface: #1e1e1e;
+  --text-primary: #eeeeee;
+  --text-secondary: #b0b0b0;
+  --border: #424242;
+  --border-light: #333333;
+  --border-focus: #616161;
+  --heading-color: #aab4ff;
+  --tag-background: #303650;
+  --tag-text: #c5ccff;
+  --success-light: #1b3320;
+  --warning-light: #3a2e16;
+  --error-light: #3b1e1e;
+  --info-light: #183238;
 }
 
 * {
@@ -91,7 +114,7 @@ section h3 {
   margin-bottom: 15px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border);
-  color: var(--primary);
+  color: var(--heading-color);
   font-size: 1.1rem;
 }
 
@@ -113,7 +136,7 @@ section h3 {
   margin-bottom: 15px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border);
-  color: var(--primary);
+  color: var(--heading-color);
   font-size: 1.1rem;
 }
 
@@ -171,7 +194,7 @@ section h3 {
 
 .activity-card h4 {
   margin-bottom: 8px;
-  color: var(--primary);
+  color: var(--heading-color);
   font-size: 1rem;
   letter-spacing: 0.3px;
   padding-bottom: 6px;
@@ -195,8 +218,8 @@ section h3 {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: #e8eaf6;
-  color: #3949ab;
+  background: var(--tag-background);
+  color: var(--tag-text);
   font-size: 0.65rem;
   font-weight: bold;
   padding: 2px 6px;
@@ -246,7 +269,7 @@ section h3 {
 }
 
 .participants-list h5 {
-  color: var(--primary);
+  color: var(--heading-color);
   margin-bottom: 5px;
   font-size: 0.8em;
 }
@@ -428,6 +451,11 @@ button {
   border: 1px solid var(--border);
 }
 
+input {
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
 .modal.show .modal-content {
   transform: translateY(0);
 }
@@ -445,7 +473,7 @@ button {
 
 /* Login modal specific styling */
 #login-modal .modal-content h3 {
-  color: var(--primary);
+  color: var(--heading-color);
   font-size: 1.2rem;
   margin-bottom: 15px;
   text-align: center;
@@ -617,6 +645,9 @@ footer {
   position: absolute;
   top: 10px;
   right: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #user-status {
